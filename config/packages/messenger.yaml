@@ -1,0 +1,12 @@
+framework:
+    messenger:
+        transports:
+            events:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: '%env(MESSENGER_TRANSPORT_PREFIX)%.events'
+                        type: fanout
+                        flags: !php/const AMQP_NOPARAM
+                    queues: {}
+        routing:
