@@ -30,7 +30,30 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *         "get",
+ *         "post"={
+ *             "controller"=\App\Controller\CreatePostAction::class,
+ *             "validation_groups"={"Default"},
+ *             "deserialize"=false,
+ *             "openapi_context"={
+ *                 "consumes"={
+ *                     "multipart/form-data",
+ *                 },
+ *                 "parameters"={
+ *                     {
+ *                         "in"="formData",
+ *                         "name"="file",
+ *                         "type"="string",
+ *                         "format"="binary",
+ *                         "description"="The file to upload",
+ *                     }
+ *                 },
+ *             }
+ *         }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=PostRepository::class)
  */
 class Post
@@ -113,6 +136,12 @@ class Post
      * @Gedmo\Timestampable(on="update")
      */
     public DateTime $updated;
+
+    /**
+     * @ORM\Column(type="string")
+     * @ApiProperty(writable=false)
+     */
+    public string $file;
 
     /**
      * @return UuidInterface|null

@@ -14,3 +14,11 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
+    Mimey\MimeTypes:
+        class: 'Mimey\MimeTypes'
+    Jenssegers\ImageHash\Implementations\PerceptualHash:
+        class: 'Jenssegers\ImageHash\Implementations\PerceptualHash'
+    Jenssegers\ImageHash\ImageHash:
+        class: 'Jenssegers\ImageHash\ImageHash'
+        arguments:
+            - '@Jenssegers\ImageHash\Implementations\PerceptualHash'
