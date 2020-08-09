@@ -1,6 +1,14 @@
 flysystem:
     storages:
-        default.storage:
+        storage.files:
             adapter: 'local'
             options:
-                directory: '%kernel.project_dir%/public/images/'
+                directory: '%kernel.project_dir%/var/files/'
+        storage.thumbnails:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/thumbnails/'
+        storage.mime:
+            adapter: 'local'
+            options:
+                directory: '%env(THUMBNAIL_MIME)%'

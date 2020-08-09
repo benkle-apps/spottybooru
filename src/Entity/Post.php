@@ -144,6 +144,12 @@ class Post
     public string $file;
 
     /**
+     * @ORM\Column(type="string")
+     * @ApiProperty(writable=false)
+     */
+    public string $thumbail;
+
+    /**
      * @return UuidInterface|null
      */
     public function getId(): ?UuidInterface
