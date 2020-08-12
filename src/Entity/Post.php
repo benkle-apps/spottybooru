@@ -24,6 +24,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\DBAL\Types\SafetyEnum;
 use App\Repository\PostRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\UuidInterface;
@@ -147,7 +149,18 @@ class Post
      * @ORM\Column(type="string")
      * @ApiProperty(writable=false)
      */
-    public string $thumbail;
+    public string $thumbnail;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PoolPost::class, mappedBy="post", orphanRemoval=true)
+     * @ApiProperty(readable=false, writable=false)
+     */
+    private Collection $pools;
+
+    public function __construct()
+    {
+        $this->pools = new ArrayCollection();
+    }
 
     /**
      * @return UuidInterface|null
@@ -155,5 +168,36 @@ class Post
     public function getId(): ?UuidInterface
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection|PoolPost[]
+     */
+    public function getPools(): Collection
+    {
+        return $this->pools;
+    }
+
+    public function addPool(PoolPost $pool): self
+    {
+        if (!$this->pools->contains($pool)) {
+            $this->pools[] = $pool;
+            $pool->post = $this;
+        }
+
+        return $this;
+    }
+
+    public function removePool(PoolPost $pool): self
+    {
+        if ($this->pools->contains($pool)) {
+            $this->pools->removeElement($pool);
+            // set the owning side to null (unless already changed)
+            if ($pool->post === $this) {
+                $pool->post = null;
+            }
+        }
+
+        return $this;
     }
 }

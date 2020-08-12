@@ -16,11 +16,16 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
+    App\DataTransformer\:
+        resource: '../src/DataTransformer/'
+        tags: ['api_platform.data_transformer']
     Mimey\MimeTypes:
         class: 'Mimey\MimeTypes'
     Jenssegers\ImageHash\Implementations\PerceptualHash:
         class: 'Jenssegers\ImageHash\Implementations\PerceptualHash'
+    Jenssegers\ImageHash\Implementations\AverageHash:
+        class: 'Jenssegers\ImageHash\Implementations\AverageHash'
     Jenssegers\ImageHash\ImageHash:
         class: 'Jenssegers\ImageHash\ImageHash'
         arguments:
-            - '@Jenssegers\ImageHash\Implementations\PerceptualHash'
+            - '@Jenssegers\ImageHash\Implementations\AverageHash'

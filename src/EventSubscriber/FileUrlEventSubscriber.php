@@ -69,7 +69,7 @@ class FileUrlEventSubscriber implements EventSubscriberInterface
             })
             ->forAll(static function ($i, Post $post) use ($request) {
                 $post->file = $request->getUriForPath('/files/' . $post->file);
-                $post->thumbail = $request->getUriForPath('/thumbnails/' . $post->thumbail);
+                $post->thumbnail = $request->getUriForPath('/thumbnails/' . $post->thumbnail);
             })
         ;
     }

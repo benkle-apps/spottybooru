@@ -3,12 +3,12 @@ flysystem:
         storage.files:
             adapter: 'local'
             options:
-                directory: '%kernel.project_dir%/var/files/'
+                directory: '%env(resolve:FILE_PATH)%'
         storage.thumbnails:
             adapter: 'local'
             options:
-                directory: '%kernel.project_dir%/var/thumbnails/'
+                directory: '%env(resolve:THUMBNAIL_PATH)%'
         storage.mime:
             adapter: 'local'
             options:
-                directory: '%env(THUMBNAIL_MIME)%'
+                directory: '%env(resolve:THUMBNAIL_MIME)%'

@@ -78,11 +78,12 @@ class FileService
         $realPath = $this->getRealPath($file);
 
         if (0 === strpos($post->mime, 'image/')) {
-            $post->checksum = $this->imageHash->hash($realPath)->toHex();
+            //$post->checksum = $this->imageHash->hash($realPath)->toHex();
             $imagick = new Imagick();
             $imagick->readImage($realPath);
             $post->width = $imagick->getImageWidth();
             $post->height = $imagick->getImageHeight();
+            $post->checksum = $imagick->getImageSignature();
             unset($imagick);
         } else if ('application/x-shockwave-flash' === $post->mime) {
                 $post->checksum = sha1_file($realPath);
@@ -145,8 +146,8 @@ class FileService
         if ($this->storageFiles->has($post->file)) {
             $this->storageFiles->delete($post->file);
         }
-        if ($this->storageThumbnails->has($post->thumbail)) {
-            $this->storageThumbnails->delete($post->thumbail);
+        if ($this->storageThumbnails->has($post->thumbnail)) {
+            $this->storageThumbnails->delete($post->thumbnail);
         }
         return $this;
     }
@@ -164,7 +165,7 @@ class FileService
      */
     public function createThumbnail(Post $post, ?UploadedFile $file): self
     {
-        $post->thumbail = $post->file;
+        $post->thumbnail = $post->file;
         $imagick = new Imagick();
 
         if (null !== $file) {
@@ -173,13 +174,13 @@ class FileService
         } else if (0 === strpos($post->mime, 'image/')) {
             $imagick->readImageFile($this->storageFiles->readStream($post->file));
         } else {
-            $post->thumbail = str_replace('/', '-', $post->mime) . '.png';
+            $post->thumbnail = str_replace('/', '-', $post->mime) . '.png';
         }
 
         $imagick->thumbnailImage($this->thumbnailSize, $this->thumbnailSize, true);
         $thumbnail = fopen('php://temp', 'wb+');
         $imagick->writeImageFile($thumbnail);
-        $this->storageThumbnails->writeStream($post->thumbail, $thumbnail);
+        $this->storageThumbnails->writeStream($post->thumbnail, $thumbnail);
 
         return $this;
     }
