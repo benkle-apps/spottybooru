@@ -35,6 +35,8 @@ doctrine:
                 alias: App
         dql:
             string_functions:
+                JSON_CONTAINS_ALL: App\DQL\JsonContainsAll
+                JSON_CONTAINS_ANY: App\DQL\JsonContainsAny
                 ALL_OF: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\All
                 ANY_OF: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Any
                 CONTAINS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Contains

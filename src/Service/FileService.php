@@ -21,6 +21,8 @@ namespace App\Service;
 
 
 use App\Entity\Post;
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
 use Imagick;
 use ImagickException;
 use Jenssegers\ImageHash\ImageHash;
@@ -86,12 +88,21 @@ class FileService
             $post->checksum = $imagick->getImageSignature();
             unset($imagick);
         } else if ('application/x-shockwave-flash' === $post->mime) {
-                $post->checksum = sha1_file($realPath);
-                [$width, $height, $type, $attr] = getimagesize($realPath);
-                $post->width = $width;
-                $post->height = $height;
+            $post->checksum = sha1_file($realPath);
+            [$width, $height, $type, $attr] = getimagesize($realPath);
+            $post->width = $width;
+            $post->height = $height;
+        } else if (0 === strpos($post->mime, 'video/')) {
+            $post->checksum = sha1_file($realPath);
+            $ffmpeg = FFProbe::create();
+            $dimensions = $ffmpeg->streams($realPath)
+                ->videos()
+                ->first()
+                ->getDimensions();
+            $post->width = $dimensions->getWidth();
+            $post->height = $dimensions->getHeight();
         } else {
-            // TODO What now?
+            $post->checksum = sha1_file($realPath);
         }
 
         $path = array_slice(str_split($post->checksum, 3), 0, 2);
@@ -166,21 +177,25 @@ class FileService
     public function createThumbnail(Post $post, ?UploadedFile $file): self
     {
         $post->thumbnail = $post->file;
-        $imagick = new Imagick();
+        $imagick = null;
 
         if (null !== $file) {
             $realPath = $this->getRealPath($file);
+            $imagick = new Imagick();
             $imagick->readImage($realPath);
         } else if (0 === strpos($post->mime, 'image/')) {
+            $imagick = new Imagick();
             $imagick->readImageFile($this->storageFiles->readStream($post->file));
         } else {
             $post->thumbnail = str_replace('/', '-', $post->mime) . '.png';
         }
 
-        $imagick->thumbnailImage($this->thumbnailSize, $this->thumbnailSize, true);
-        $thumbnail = fopen('php://temp', 'wb+');
-        $imagick->writeImageFile($thumbnail);
-        $this->storageThumbnails->writeStream($post->thumbnail, $thumbnail);
+        if (null !== $imagick) {
+            $imagick->thumbnailImage($this->thumbnailSize, $this->thumbnailSize, true);
+            $thumbnail = fopen('php://temp', 'wb+');
+            $imagick->writeImageFile($thumbnail);
+            $this->storageThumbnails->writeStream($post->thumbnail, $thumbnail);
+        }
 
         return $this;
     }

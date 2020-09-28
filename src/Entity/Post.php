@@ -19,9 +19,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\DBAL\Types\SafetyEnum;
+use App\Filter\ContainsFilter;
 use App\Repository\PostRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -30,6 +32,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
 /**
  * @ApiResource(
@@ -71,17 +76,20 @@ class Post
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @ApiFilter(SearchFilter::class, strategy=SearchFilter::STRATEGY_PARTIAL)
      */
     public string $title = '';
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @ApiFilter(SearchFilter::class, strategy=SearchFilter::STRATEGY_PARTIAL)
      */
     public ?string $description = null;
 
     /**
      * @ORM\Column(type="SafetyEnum")
      * @Assert\Choice(choices=\App\DBAL\Types\SafetyEnum::CHOICES, message="Invalid safety value")
+     * @ApiFilter(SearchFilter::class, strategy=SearchFilter::STRATEGY_EXACT)
      */
     public string $safety = SafetyEnum::SAFE;
 
@@ -92,6 +100,7 @@ class Post
      *     @Assert\Type(type="string", message="Tags must be character strings"),
      *     @Assert\Length(min=3, allowEmptyString=false)
      * })
+     * @ApiFilter(ContainsFilter::class)
      */
     public array $tags = [];
 
@@ -110,18 +119,21 @@ class Post
     /**
      * @ORM\Column(type="integer")
      * @ApiProperty(writable=false)
+     * @ApiFilter(RangeFilter::class)
      */
     public int $width = 0;
 
     /**
      * @ORM\Column(type="integer")
      * @ApiProperty(writable=false)
+     * @ApiFilter(RangeFilter::class)
      */
     public int $height = 0;
 
     /**
      * @ORM\Column(type="string", length=32)
      * @ApiProperty(writable=false)
+     * @ApiFilter(SearchFilter::class, strategy=SearchFilter::STRATEGY_EXACT)
      */
     public string $mime = '';
 
@@ -129,6 +141,7 @@ class Post
      * @ORM\Column(type="datetimetz")
      * @ApiProperty(writable=false)
      * @Gedmo\Timestampable(on="create")
+     * @ApiFilter(DateFilter::class)
      */
     public DateTime $created;
 
@@ -136,6 +149,7 @@ class Post
      * @ORM\Column(type="datetimetz")
      * @ApiProperty(writable=false)
      * @Gedmo\Timestampable(on="update")
+     * @ApiFilter(DateFilter::class)
      */
     public DateTime $updated;
 

@@ -67,7 +67,7 @@ class FileUrlEventSubscriber implements EventSubscriberInterface
             ->filter(static function ($post) {
                 return $post instanceof Post;
             })
-            ->forAll(static function ($i, Post $post) use ($request) {
+            ->forAll(static function ($_, Post $post) use ($request) {
                 $post->file = $request->getUriForPath('/files/' . $post->file);
                 $post->thumbnail = $request->getUriForPath('/thumbnails/' . $post->thumbnail);
             })
