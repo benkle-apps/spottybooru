@@ -22,14 +22,13 @@ namespace App\Filter;
 use ApiPlatform\Core\Bridge\Doctrine\Common\PropertyHelperTrait;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDOPgSql\Driver as PostgresDriver;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
 class ContainsFilter extends AbstractContextAwareFilter
 {
     use PropertyHelperTrait;
+    use ContainsFilterTrait;
 
     /**
      * @inheritDoc
@@ -39,38 +38,7 @@ class ContainsFilter extends AbstractContextAwareFilter
         if (!$this->isPropertyEnabled($property, $resourceClass) || !$this->isPropertyMapped($property, $resourceClass)) {
             return;
         }
-
-        if ($queryBuilder->getEntityManager()->getConnection()->getDriver() instanceof PostgresDriver) {
-            $groups = array_merge(['all' => [], 'some' => [], 'none' => [], 'not' => []], $value);
-            if ([] !== $groups['all']) {
-                $parameterName = $queryNameGenerator->generateParameterName($property);
-                $queryBuilder
-                    ->andWhere("JSON_CONTAINS_ALL(o.{$property}, :{$parameterName}) = TRUE")
-                    ->setParameter($parameterName, $groups['all'], Connection::PARAM_STR_ARRAY)
-                ;
-            }
-            if ([] !== $groups['some']) {
-                $parameterName = $queryNameGenerator->generateParameterName($property);
-                $queryBuilder
-                    ->andWhere("JSON_CONTAINS_ANY(o.{$property}, :{$parameterName}) = TRUE")
-                    ->setParameter($parameterName, $groups['some'], Connection::PARAM_STR_ARRAY)
-                ;
-            }
-            if ([] !== $groups['none']) {
-                $parameterName = $queryNameGenerator->generateParameterName($property);
-                $queryBuilder
-                    ->andWhere("JSON_CONTAINS_ANY(o.{$property}, :{$parameterName}) = FALSE")
-                    ->setParameter($parameterName, $groups['none'], Connection::PARAM_STR_ARRAY)
-                ;
-            }
-            if ([] !== $groups['not']) {
-                $parameterName = $queryNameGenerator->generateParameterName($property);
-                $queryBuilder
-                    ->andWhere("JSON_CONTAINS_ALL(o.{$property}, :{$parameterName}) = FALSE")
-                    ->setParameter($parameterName, $groups['not'], Connection::PARAM_STR_ARRAY)
-                ;
-            }
-        }
+        $this->buildContainsQueries($queryBuilder, $value, $queryNameGenerator, $property);
     }
 
     /**
