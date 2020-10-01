@@ -62,12 +62,12 @@ class FileUrlEventSubscriber implements EventSubscriberInterface
         if ($posts instanceof \Traversable) {
             $posts = iterator_to_array($posts);
         }
-        $posts = new ArrayCollection(is_iterable($posts) ? $posts : [$posts]);
-        $posts
+
+        (new ArrayCollection(is_iterable($posts) ? $posts : [$posts]))
             ->filter(static function ($post) {
                 return $post instanceof Post;
             })
-            ->forAll(static function ($_, Post $post) use ($request) {
+            ->map(static function (Post $post) use ($request) {
                 $post->file = $request->getUriForPath('/files/' . $post->file);
                 $post->thumbnail = $request->getUriForPath('/thumbnails/' . $post->thumbnail);
             })

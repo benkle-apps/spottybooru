@@ -195,6 +195,7 @@ class FileService
             $thumbnail = fopen('php://temp', 'wb+');
             $imagick->writeImageFile($thumbnail);
             $this->storageThumbnails->writeStream($post->thumbnail, $thumbnail);
+            fclose($thumbnail);
         }
 
         return $this;
