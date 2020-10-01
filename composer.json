@@ -1,6 +1,6 @@
 {
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^7.4",
         "ext-ctype": "*",
@@ -34,6 +34,7 @@
         "symfony/security-bundle": "5.1.*",
         "symfony/twig-bundle": "5.1.*",
         "symfony/validator": "5.1.*",
+        "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.1.*"
     },
     "require-dev": {

@@ -1,0 +1,11 @@
+$primary: darken(#428bca, 20%);
+@import "~bootstrap/scss/bootstrap";
+
+.img-thumbnail {
+  [data-safety="sketchy"] & {
+    @extend .border-warning;
+  }
+  [data-safety="unsafe"] & {
+    @extend .border-danger;
+  }
+}

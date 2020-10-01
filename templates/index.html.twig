@@ -1,0 +1,30 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <header class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="/">Spottybooru</a>
+        <button class="btn" v-on:click="loadImages(pagination.first)" v-bind:disabled="!pagination.first">⮜⮜</button>
+        <button class="btn" v-on:click="loadImages(pagination.previous)" v-bind:disabled="!pagination.previous">⮜</button>
+        <button class="btn" v-on:click="loadImages(pagination.next)" v-bind:disabled="!pagination.next">⮞</button>
+        <button class="btn" v-on:click="loadImages(pagination.last)" v-bind:disabled="!pagination.last">⮞⮞</button>
+    </header>
+    <main class="container-fluid">
+        <div class="row">
+            <div class="col-1 container">
+                <div class="row" v-for="tag in tags">
+                    <a class="col-10" href="#" v-on:click="filterTag(tag.title)">${ tag.title }$</a> <span class="col-2 badge badge-info">${ tag.amount }$</span>
+                </div>
+            </div>
+            <div class="col-11">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-1 col-lg-3 col-md-4 col-6 text-center" v-bind:data-safety="post.safety" v-for="post in posts">
+                            <a href="#" class="d-block mb-4 h-100">
+                                <img class="img-fluid img-thumbnail" v-bind:src="post.thumbnail" v-bind:alt="post.title" v-bind:title="post.title">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

@@ -47,16 +47,12 @@ class TagsController
         ];
 
         $qb = $postRepository->createQueryBuilder('o')
-                             ->select('JSONB_ARRAY_ELEMENTS_TEXT(o.tags) t', 'count(o.id) c')
-                             ->groupBy('t')
+                             ->select('JSONB_ARRAY_ELEMENTS_TEXT(o.tags) title', 'count(o.id) amount')
+                             ->groupBy('title')
         ;
         $this->buildContainsQueries($qb, $params, new QueryNameGenerator(), 'tags');
-
         $tags = $qb->getQuery()->getArrayResult();
-        $tags = array_combine(
-            array_column($tags, 't'),
-            array_column($tags, 'c'),
-        );
+
         return new JsonResponse($tags);
     }
 
@@ -73,17 +69,13 @@ class TagsController
         $post = $postRepository->find($id);
         if (null !== $post) {
             $qb = $postRepository->createQueryBuilder('o')
-                                 ->select('JSONB_ARRAY_ELEMENTS_TEXT(o.tags) t', 'count(o.id) c')
-                                 ->groupBy('t')
+                                 ->select('JSONB_ARRAY_ELEMENTS_TEXT(o.tags) title', 'count(o.id) amount')
+                                 ->groupBy('title')
             ;
             $tags = $qb->getQuery()->getArrayResult();
             $tags = array_filter($tags, static function($row) use ($post) {
-                return in_array($row['t'], $post->tags, true);
+                return in_array($row['title'], $post->tags, true);
             });
-            $tags = array_combine(
-                array_column($tags, 't'),
-                array_column($tags, 'c'),
-            );
         }
         return new JsonResponse($tags);
     }
