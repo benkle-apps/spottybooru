@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     /**
-     * @Route(path="/")
+     * @Route(path="/{path}", requirements={"path"=".*"}, priority=-999)
      * @return Response
      */
     public function index(): Response

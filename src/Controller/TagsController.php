@@ -39,12 +39,12 @@ class TagsController
      */
     public function tagStats(Request $request, PostRepository $postRepository): JsonResponse
     {
-        $params = [
+        $params = $request->query->get('tags', [
             'all'  => $request->query->get('all', []),
             'some' => $request->query->get('some', []),
             'none' => $request->query->get('none', []),
             'not'  => $request->query->get('not', []),
-        ];
+        ]);
 
         $qb = $postRepository->createQueryBuilder('o')
                              ->select('JSONB_ARRAY_ELEMENTS_TEXT(o.tags) title', 'count(o.id) amount')

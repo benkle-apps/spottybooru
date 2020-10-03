@@ -1,11 +1,58 @@
 $primary: darken(#428bca, 20%);
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px,
+        xxl: 1400px,
+);
+$container-max-widths: (
+        sm: 540px,
+        md: 720px,
+        lg: 960px,
+        xl: 1140px,
+        xxl: 1340px
+);
+
 @import "~bootstrap/scss/bootstrap";
 
 .img-thumbnail {
   [data-safety="sketchy"] & {
-    @extend .border-warning;
+    background-color: $warning;
   }
   [data-safety="unsafe"] & {
-    @extend .border-danger;
+    background-color: $danger;
+  }
+}
+
+.tag {
+  margin-top: 5px;
+  .btn {
+    @include button-size($badge-padding-y, $badge-padding-x, $badge-font-size, 1, 0);
+    &:first-of-type {
+      border-bottom-left-radius: $btn-border-radius;
+      border-top-left-radius: $btn-border-radius;
+    }
+    &:last-of-type {
+      border-bottom-right-radius: $btn-border-radius;
+      border-top-right-radius: $btn-border-radius;
+    }
+  }
+  .hover {
+    display: none;
+  }
+  &:hover {
+    .hover {
+      display: block;
+    }
+    .no-hover {
+      display: none;
+    }
+  }
+  & > a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
