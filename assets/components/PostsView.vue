@@ -19,10 +19,10 @@
 <template>
   <main class="container-fluid">
     <div class="row">
-      <tags-list class="col-xxl-1 col-md-2 col-sm-12" v-bind:tags="tagsData" v-bind:navigate="addTagToFilter"></tags-list>
-      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" v-bind:posts="posts"></posts-grid>
+      <tags-list class="col-xxl-1 col-md-2 col-sm-12" v-bind:tags="tags" v-bind:navigate="addTagToFilter" v-bind:showControls="true"></tags-list>
+      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" v-bind:posts="posts" v-bind:navigate="gotoPost"></posts-grid>
       <pagination-control
-          v-bind:navigate="loadImages"
+          v-bind:navigate="changePage"
           v-bind:first="pagination.first"
           v-bind:previous="pagination.previous"
           v-bind:next="pagination.next"
@@ -36,74 +36,50 @@
 import PostsGrid from "./PostsGrid.vue";
 import TagsList from "./TagsList.vue";
 import PaginationControl from "./PaginationControl.vue";
+import Client from "../utils/client";
+
+const extractPageFromUri = uri => {
+  if (!uri) {
+    return false;
+  }
+  uri = new URL(uri, 'http://somewhere.org/');
+  return uri.searchParams.get('page') ?? false;
+};
 
 export default {
   name: 'PostsView',
   components: {PaginationControl, PostsGrid, TagsList},
   props: {
-    tags: [Array, String],
+    filterTags: [Array, String],
     changeTags: Function,
+    gotoPost: Function,
+    client: Client,
+    page: Number,
   },
   data: () => ({
-    tagsData: [],
+    tags: [],
     posts: [],
     pagination: {
-      first: false,
+      first: 1,
       previous: false,
       next: false,
       last: false,
     },
   }),
-  created: function() {
-    this.loadImages();
-    this.loadTags();
-  },
   methods: {
-    addTagsFilter: function(uri) {
-      const tags = this.tags;
-      tags.filter(p => !!p).forEach(tag => {
-        switch (tag[0]) {
-          case '-':
-            uri.searchParams.append('tags[none][]', tag.substr(1));
-            break;
-          case '+':
-            uri.searchParams.append('tags[all][]', tag.substr(1));
-            break;
-          default:
-            uri.searchParams.append('tags[all][]', tag.toString());
-            break;
-        }
+    update: function(filterTags, page) {
+      this.client.getTags(filterTags).then(data => this.tags = data);
+      this.client.getPosts(filterTags, page).then(data => {
+        this.posts = data['hydra:member'];
+        this.pagination.first = extractPageFromUri(data['hydra:view']['hydra:first']);
+        this.pagination.previous = extractPageFromUri(data['hydra:view']['hydra:previous']);
+        this.pagination.next = extractPageFromUri(data['hydra:view']['hydra:next']);
+        this.pagination.last = extractPageFromUri(data['hydra:view']['hydra:last']);
       });
-    },
-    loadTags: function() {
-      const uri = new URL('api/posts/tags', location.href);
-      this.addTagsFilter(uri);
-      fetch(uri.toString())
-          .then(response => response.json())
-          .then(data => data.map(datum => {
-            if (datum.amount > 1100) {
-              datum.amount = (datum.amount / 1000.0).toFixed(1) + 'k';
-            }
-            return datum;
-          }))
-          .then(data => this.tagsData = data);
-    },
-    loadImages: function() {
-      const uri = new URL('api/posts', location.href);
-      this.addTagsFilter(uri);
-      fetch(uri.toString())
-          .then(response => response.json())
-          .then(data => {
-            this.posts = data['hydra:member'];
-            this.pagination.first = data['hydra:view']['hydra:first'];
-            this.pagination.previous = data['hydra:view']['hydra:previous'];
-            this.pagination.next = data['hydra:view']['hydra:next'];
-            this.pagination.last = data['hydra:view']['hydra:last'];
-          });
     },
     addTagToFilter: function(tag, operation) {
       operation = operation || 'set';
-      let tags = this.tags;
+      let tags = this.filterTags.filter(v => !(v in [tag, '-' + tag]));
       switch (operation) {
         case 'set':
           tags = [tag];
@@ -115,14 +91,22 @@ export default {
           tags.push('-' + tag);
           break;
       }
-      this.changeTags(tags);
+      this.changeTags(tags.sort());
     },
+    changePage: function(page) {
+      this.changeTags(this.filterTags.sort(), page);
+    }
+  },
+  created() {
+    this.update(this.filterTags, this.page);
   },
   watch: {
-    $route(to, from) {
-      this.loadImages();
-      this.loadTags();
+    filterTags(to) {
+      this.update(to, 1);
     },
+    page(to) {
+      this.update(this.filterTags, to);
+    }
   },
 }
 </script>

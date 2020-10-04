@@ -73,9 +73,9 @@ class TagsController
                                  ->groupBy('title')
             ;
             $tags = $qb->getQuery()->getArrayResult();
-            $tags = array_filter($tags, static function($row) use ($post) {
+            $tags = array_values(array_filter($tags, static function($row) use ($post) {
                 return in_array($row['title'], $post->tags, true);
-            });
+            }));
         }
         return new JsonResponse($tags);
     }

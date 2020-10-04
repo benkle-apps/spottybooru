@@ -20,7 +20,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xl-2 col-lg-3 col-md-4 col-6 text-center" :data-safety="post.safety" v-for="post in posts">
-        <a href="#" class="d-block mb-4 h-100">
+        <a href="" @click.stop.prevent="navigate(post.id)" class="d-block mb-4 h-100">
           <img class="img-fluid img-thumbnail" :src="post.thumbnail" :alt="post.title" :title="post.title">
         </a>
       </div>
@@ -33,6 +33,7 @@ export default {
   name: 'PostsGrid',
   props: {
     posts: Array,
+    navigate: Function,
   },
 };
 </script>

@@ -17,25 +17,52 @@
   -->
 
 <template>
-  <div class="container">
-    <div class="row tag" v-for="tag in tags">
-      <a class="col-10" @click.stop.prevent="navigate(tag.title)" href="" :title="tag.title">{{ tag.title }}</a>
-      <span class="col-1 btn btn-success hover" @click="navigate(tag.title, 'add')" v-if="showControls">+</span>
-      <span class="col-2 badge badge-info" :class="{'no-hover': showControls}">
-        <span>{{ tag.amount }}</span>
-      </span>
-      <span class="col-1 btn btn-danger hover" @click="navigate(tag.title, 'remove')" v-if="showControls">-</span>
+  <main class="container-fluid">
+    <div class="row">
+      <tags-list class="col-xxl-1 col-md-2 col-sm-12" v-bind:tags="tags" v-bind:navigate="gotoTag"
+                 v-bind:showControls="false"></tags-list>
+      <figure class="col-xxl-11 col-md-10 col-sm-12">
+        <img :src="post.file" :alt="post.title"/>
+      </figure>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
+import TagsList from "./TagsList.vue";
+import Client from "../utils/client";
+
 export default {
-  name: 'TagsList',
+  name: 'PostView',
+  components: {TagsList},
   props: {
-    tags: Array,
-    navigate: Function,
-    showControls: Boolean,
+    uuid: String,
+    changeTags: Function,
+    client: Client,
   },
-};
+  data: () => ({
+    tags: [],
+    post: {
+      file: '',
+      title: '',
+    },
+  }),
+  methods: {
+    update: function (uuid) {
+      this.client.getTagsForPost(uuid).then(data => this.tags = data);
+      this.client.getPost(uuid).then(data => this.post = data);
+    },
+    gotoTag: function (tag) {
+      this.changeTags([tag]);
+    },
+  },
+  created() {
+    this.update(this.uuid);
+  },
+  watch: {
+    uuid(to) {
+      this.update(to);
+    },
+  },
+}
 </script>

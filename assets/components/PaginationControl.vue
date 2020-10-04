@@ -30,10 +30,10 @@ export default {
   name: 'PaginationControl',
   props: {
     navigate: Function,
-    first: [String, Boolean],
-    previous: [String, Boolean],
-    next: [String, Boolean],
-    last: [String, Boolean],
+    first: [String, Boolean, Number],
+    previous: [String, Boolean, Number],
+    next: [String, Boolean, Number],
+    last: [String, Boolean, Number],
   },
 }
 </script>
