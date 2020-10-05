@@ -101,4 +101,21 @@ class Pool
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return ['id' => $this->getId(), 'title' => $this->title];
+    }
+
+    /**
+     * @param array $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'];
+        $this->title = $data['title'];
+    }
 }

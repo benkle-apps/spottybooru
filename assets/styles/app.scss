@@ -26,6 +26,15 @@ $container-max-widths: (
   }
 }
 
+.post {
+  padding: $jumbotron-padding;
+  img, video {
+    max-width: 80vw;
+    max-height: 90vh;
+    margin: 0 auto;
+  }
+}
+
 .tag {
   margin-top: 5px;
   .btn {

@@ -21,9 +21,29 @@
     <div class="row">
       <tags-list class="col-xxl-1 col-md-2 col-sm-12" v-bind:tags="tags" v-bind:navigate="gotoTag"
                  v-bind:showControls="false"></tags-list>
-      <figure class="col-xxl-11 col-md-10 col-sm-12">
-        <img :src="post.file" :alt="post.title"/>
-      </figure>
+      <div class="col-xxl-11 col-md-10 col-sm-12 post">
+        <nav class="btn-group" v-for="pool in post.pools">
+          <router-link v-if="pool.previous" :to="pool.previous" class="btn" @click.stop.prevent="gotoPost(pool.previous)">⮜</router-link>
+          <span class="btn">{{ pool.title }}</span>
+          <router-link v-if="pool.next" :to="pool.next" class="btn" @click.stop.prevent="gotoPost(pool.previous)">⮞</router-link>
+        </nav>
+        <img :src="post.file" :alt="post.title" v-if="post.mime.startsWith('image/')"/>
+        <video controls preload="metadata" :poster="post.thumbnail" v-if="post.mime.startsWith('video/')">
+          <source :src="post.file" :type="post.mime"/>
+        </video>
+        <object :width="post.width" :height="post.height" type="application/x-shockwave-flash"
+                v-if="'application/x-shockwave-flash' === post.mime">
+          <param name="movie" :value="post.file"/>
+          <param name="wmode" value="opaque"/>
+          <embed :src="post.file" allowscriptaccess="never" :width="post.width" :height="post.height" />
+        </object>
+        <div>
+          <h3>{{ post.title }}</h3>
+          <div v-html="description"></div>
+          <hr />
+          <a :href="post.file">Download</a>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -34,19 +54,31 @@ import Client from "../utils/client";
 
 export default {
   name: 'PostView',
-  components: {TagsList},
+  components: {TagsList,},
   props: {
     uuid: String,
     changeTags: Function,
     client: Client,
+    gotoPost: Function,
   },
   data: () => ({
     tags: [],
     post: {
       file: '',
       title: '',
+      description: '',
+      mime: '',
+      thumbnail: '',
+      width: 0,
+      height: 0,
+      pools: [],
     },
   }),
+  computed: {
+    description: function () {
+      return (this.post.description ?? '').replaceAll(/[\n\r]+/ig, '<br/>');
+    }
+  },
   methods: {
     update: function (uuid) {
       this.client.getTagsForPost(uuid).then(data => this.tags = data);

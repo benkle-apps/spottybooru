@@ -38,6 +38,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
 /**
  * @ApiResource(
+ *     output="App\DTO\Post",
+ *     input="App\DTO\Post",
  *     collectionOperations={
  *         "get",
  *         "post"={
@@ -167,7 +169,7 @@ class Post
 
     /**
      * @ORM\OneToMany(targetEntity=PoolPost::class, mappedBy="post", orphanRemoval=true)
-     * @ApiProperty(readable=false, writable=false)
+     * @ApiProperty(readable=true, writable=false)
      */
     private Collection $pools;
 

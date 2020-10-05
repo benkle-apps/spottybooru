@@ -16,7 +16,19 @@ const router = new VueRouter({
     routes: [
         {
             name: 'PostsView',
-            path: '/:tags([^/]+)?/:page(\\d+)?',
+            path: '/:page(\\d+)?',
+            component: PostsView,
+            props: route => ({
+                filterTags: [],
+                changeTags,
+                gotoPost,
+                client,
+                page: parseInt(route.params.page ?? 1),
+            }),
+        },
+        {
+            name: 'PostsView',
+            path: '/:tags([^/]+)/:page(\\d+)?',
             component: PostsView,
             props: route => ({
                 filterTags: (route.params.tags ?? '').split(','),
@@ -33,6 +45,7 @@ const router = new VueRouter({
             props: route => ({
                 uuid: route.params.uuid,
                 changeTags,
+                gotoPost,
                 client,
             }),
         },

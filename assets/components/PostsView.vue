@@ -48,7 +48,7 @@ const extractPageFromUri = uri => {
 
 export default {
   name: 'PostsView',
-  components: {PaginationControl, PostsGrid, TagsList},
+  components: {PaginationControl, PostsGrid, TagsList,},
   props: {
     filterTags: [Array, String],
     changeTags: Function,
@@ -102,7 +102,7 @@ export default {
   },
   watch: {
     filterTags(to) {
-      this.update(to, 1);
+      this.update(to, this.page);
     },
     page(to) {
       this.update(this.filterTags, to);
