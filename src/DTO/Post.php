@@ -22,6 +22,8 @@ namespace App\DTO;
 
 class Post
 {
+    public string $id;
+
     public string $title;
 
     public ?string $description;

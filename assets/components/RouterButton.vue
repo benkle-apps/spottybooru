@@ -17,23 +17,23 @@
   -->
 
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 text-center" :data-safety="post.safety" v-for="post in posts">
-        <router-link :to="'/post/' + post.id" @click.stop.prevent="navigate(post.id)" class="d-block mb-4 h-100">
-          <img class="img-fluid img-thumbnail" :src="post.thumbnail" :alt="post.title" :title="post.title">
-        </router-link>
-      </div>
-    </div>
-  </div>
+  <a :disabled="!!!link" class="btn" @click.stop.prevent="$router.push(link)" :href="link">
+    <slot>Text</slot>
+  </a>
 </template>
 
 <script>
 export default {
-  name: 'PostsGrid',
+  name: 'RouterButton',
   props: {
-    posts: Array,
-    navigate: Function,
-  },
-};
+    link: {
+      type: String,
+      required: true
+    }
+  }
+}
 </script>
+
+<style scoped>
+
+</style>

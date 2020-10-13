@@ -18,20 +18,29 @@
 
 <template>
   <div class="container">
-    <div class="row tag" v-for="tag in tags">
-      <a class="col-10" @click.stop.prevent="navigate(tag.title)" href="" :title="tag.title">{{ tag.title }}</a>
-      <span class="col-1 btn btn-success hover" @click="navigate(tag.title, 'add')" v-if="showControls">+</span>
-      <span class="col-2 badge badge-info" :class="{'no-hover': showControls}">
-        <span>{{ tag.amount }}</span>
+    <div class="row">
+      <span v-for="tag in tags" class="btn-group tag col-sm-6 col-6 col-md-12">
+        <router-button class="btn-success hover w-25" :link="navigate(tag.title, 'add')" v-if="showControls">+</router-button>
+
+        <router-button :link="navigate(tag.title, 'set')" :title="tag.title" class="w-50">
+          {{ tag.title }}
+          <span class="badge badge-info" :class="{'no-hover': showControls}">
+            <span>{{ tag.amount }}</span>
+          </span>
+        </router-button>
+
+        <router-button :link="navigate(tag.title, 'remove')" class="btn-danger hover w-25" v-if="showControls">-</router-button>
       </span>
-      <span class="col-1 btn btn-danger hover" @click="navigate(tag.title, 'remove')" v-if="showControls">-</span>
     </div>
   </div>
 </template>
 
 <script>
+import RouterButton from "./RouterButton";
+
 export default {
   name: 'TagsList',
+  components: {RouterButton},
   props: {
     tags: Array,
     navigate: Function,

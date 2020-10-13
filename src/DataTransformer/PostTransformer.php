@@ -54,6 +54,7 @@ class PostTransformer implements DataTransformerInterface
             $result = new PostDTO();
             $result->thumbnail = $this->urlHelper->getAbsoluteUrl('/thumbnails/' . $object->thumbnail);
             $result->file = $this->urlHelper->getAbsoluteUrl('/files/' . $object->file);
+            $result->id = $object->getId()->toString();
             $result->tags = $object->tags;
             $result->checksum = $object->checksum;
             $result->title = $object->title;

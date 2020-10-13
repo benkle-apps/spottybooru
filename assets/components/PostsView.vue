@@ -19,23 +19,16 @@
 <template>
   <main class="container-fluid">
     <div class="row">
-      <tags-list class="col-xxl-1 col-md-2 col-sm-12" v-bind:tags="tags" v-bind:navigate="addTagToFilter" v-bind:showControls="true"></tags-list>
-      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" v-bind:posts="posts" v-bind:navigate="gotoPost"></posts-grid>
-      <pagination-control
-          v-bind:navigate="changePage"
-          v-bind:first="pagination.first"
-          v-bind:previous="pagination.previous"
-          v-bind:next="pagination.next"
-          v-bind:last="pagination.last"
-      ></pagination-control>
+      <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="addTagToFilter" :showControls="true"></tags-list>
+      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :posts="posts" :navigate="gotoPost"></posts-grid>
     </div>
   </main>
 </template>
 
 <script>
-import PostsGrid from "./PostsGrid.vue";
-import TagsList from "./TagsList.vue";
-import PaginationControl from "./PaginationControl.vue";
+import PostsGrid from "./PostsGrid";
+import TagsList from "./TagsList";
+import PaginationControl from "./PaginationControl";
 import Client from "../utils/client";
 
 const extractPageFromUri = uri => {
@@ -51,7 +44,6 @@ export default {
   components: {PaginationControl, PostsGrid, TagsList,},
   props: {
     filterTags: [Array, String],
-    changeTags: Function,
     gotoPost: Function,
     client: Client,
     page: Number,
@@ -79,7 +71,7 @@ export default {
     },
     addTagToFilter: function(tag, operation) {
       operation = operation || 'set';
-      let tags = this.filterTags.filter(v => !(v in [tag, '-' + tag]));
+      let tags = this.filterTags.filter(t => tag !== t.replace(/^-/, ''));
       switch (operation) {
         case 'set':
           tags = [tag];
@@ -91,11 +83,8 @@ export default {
           tags.push('-' + tag);
           break;
       }
-      this.changeTags(tags.sort());
+      return '/' + tags.join(',');
     },
-    changePage: function(page) {
-      this.changeTags(this.filterTags.sort(), page);
-    }
   },
   created() {
     this.update(this.filterTags, this.page);
