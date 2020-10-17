@@ -19,8 +19,8 @@
 <template>
   <main class="container-fluid">
     <div class="row">
-      <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="addTagToFilter" :showControls="true"></tags-list>
-      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :pagination="pagination" :posts="posts" :navigate="gotoPost"></posts-grid>
+      <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="addTagToFilter" :showControls="true" v-if="pagination"></tags-list>
+      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :title="title" :pagination="pagination" :posts="posts" :navigate="gotoPost"></posts-grid>
     </div>
   </main>
 </template>
@@ -50,6 +50,7 @@ export default {
   data: () => ({
     tags: [],
     posts: [],
+    title: false,
     pagination: {
       first: 1,
       previous: false,
@@ -98,7 +99,7 @@ export default {
     },
     page(to) {
       this.update(this.filterTags, to);
-    }
+    },
   },
 }
 </script>

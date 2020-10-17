@@ -37,6 +37,8 @@ const addFilterTagsToUri = (uri, filterTags) => {
     });
 };
 
+const jsonFetch = uri => fetch(uri instanceof URL ? uri.toString() : uri, {headers: {'Accept': 'application/ld+json'}}).then(response => response.json());
+
 class Client {
     constructor(baseUri) {
         this.baseUri = baseUri;
@@ -44,34 +46,43 @@ class Client {
 
     async getTagsForPost(uuid) {
         const uri = new URL('api/posts/' + uuid + '/tags', this.baseUri);
-        return fetch(uri.toString())
-            .then(response => response.json())
-            .then(data => data.map(addDisplayAmountToTags))
-            ;
+        return jsonFetch(uri).then(data => data.map(addDisplayAmountToTags));
     }
 
     async getTags(filterTags = []) {
         const uri = new URL('api/posts/tags', this.baseUri);
         addFilterTagsToUri(uri, filterTags);
-        return fetch(uri.toString())
-            .then(response => response.json())
-            .then(data => data.map(addDisplayAmountToTags))
-            ;
+        return jsonFetch(uri).then(data => data.map(addDisplayAmountToTags));
+    }
+
+    async getPostsForPool(uuid, resolvePosts) {
+        const uri = new URL('api/pools/' + uuid, this.baseUri);
+        let result = jsonFetch(uri);
+        if (resolvePosts) {
+            return result.then(pool => new Promise((resolve, reject) => {
+                Promise.all(
+                    pool.posts
+                    .map(post => new URL(post, this.baseUri))
+                    .map(jsonFetch)
+                ).then(posts => {
+                    posts.forEach(post => pool.posts[pool.posts.indexOf(post['@id'])] = post);
+                    resolve(pool);
+                });
+            }));
+        }
+        return result;
     }
 
     async getPosts(filterTags = [], page = 1) {
         const uri = new URL('api/posts', this.baseUri);
         uri.searchParams.set('page', page.toString());
         addFilterTagsToUri(uri, filterTags);
-        return fetch(uri.toString())
-            .then(response => response.json())
-            ;
+        return jsonFetch(uri);
     }
 
     async getPost(uuid) {
         const uri = new URL('api/posts/' + uuid, this.baseUri);
-        return fetch(uri.toString())
-            .then(response => response.json());
+        return jsonFetch(uri);
     }
 }
 

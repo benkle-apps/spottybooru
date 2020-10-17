@@ -26,7 +26,9 @@
             <router-button :link="pool.previous" class="btn-primary col-sm-2 col-md-1">
               ⮜
             </router-button>
-            <span class="btn btn-light col-sm-8 col-md-10">{{ pool.title }}</span>
+            <router-button :link="'/pool/' + pool.id" class="btn btn-light col-sm-8 col-md-10">
+              {{ pool.title }}
+            </router-button>
             <router-button :link="pool.next" class="btn-primary col-sm-2 col-md-1">
               ⮞
             </router-button>

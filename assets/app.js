@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import PostsView from './components/PostsView.vue';
 import PostView from "./components/PostView.vue";
 import Client from "./utils/client";
+import PoolView from "./components/PoolView";
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,16 @@ const router = new VueRouter({
             name: 'PostView',
             path: '/post/:uuid',
             component: PostView,
+            props: route => ({
+                uuid: route.params.uuid,
+                gotoPost,
+                client,
+            }),
+        },
+        {
+            name: 'PoolView',
+            path: '/pool/:uuid',
+            component: PoolView,
             props: route => ({
                 uuid: route.params.uuid,
                 gotoPost,

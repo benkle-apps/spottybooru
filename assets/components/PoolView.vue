@@ -16,32 +16,33 @@
   - THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -->
 
-<template>
-  <a v-if="!disabled && !!link" class="btn" @click.stop.prevent="$router.push(link)" :href="link">
-    <slot />
-  </a>
-  <button v-else :disabled="disabled || !!!link" class="btn">
-    <slot />
-  </button>
-</template>
-
 <script>
+import PostsView from "./PostsView";
+import Client from "../utils/client";
+
 export default {
-  name: 'RouterButton',
+  name: 'PoolView',
+  extends: PostsView,
   props: {
-    link: {
-      type: [String, Boolean],
-      required: true
+    uuid: String,
+    gotoPost: Function,
+    client: Client,
+  },
+  methods: {
+    update: function(uuid) {
+      this.client.getPostsForPool(uuid || this.uuid, true).then(pool => {
+        this.posts = pool.posts;
+        this.pagination = false;
+        this.title = pool.title;
+      });
     },
-    disabled: {
-      type: Boolean,
-      required: false,
-      default: false,
+  },
+  watch: {
+    filterTags(to) {},
+    page(to) {},
+    uuid(to) {
+      this.update(to);
     },
   },
 }
 </script>
-
-<style scoped>
-
-</style>

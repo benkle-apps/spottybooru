@@ -18,6 +18,9 @@
 
 <template>
   <div class="container">
+    <div class="row" v-if="title">
+      <h3 class="col-12">{{ title }}</h3>
+    </div>
     <div class="row" v-if="pagination && (pagination.next || pagination.previous)">
       <nav class="btn-group col-12 container">
         <router-button :link="pagination.first" :disabled="!pagination.previous" class="btn-primary col-sm-2 col-md-1">
@@ -54,9 +57,8 @@ export default {
   props: {
     posts: Array,
     navigate: Function,
-    pagination: {
-      type: [Object, Boolean],
-    },
+    pagination: [Object, Boolean],
+    title: [Boolean, String],
   },
 };
 </script>
