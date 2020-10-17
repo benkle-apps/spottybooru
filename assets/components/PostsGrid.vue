@@ -18,6 +18,23 @@
 
 <template>
   <div class="container">
+    <div class="row" v-if="pagination && (pagination.next || pagination.previous)">
+      <nav class="btn-group col-12 container">
+        <router-button :link="pagination.first" :disabled="!pagination.previous" class="btn-primary col-sm-2 col-md-1">
+          ⮜⮜
+        </router-button>
+        <router-button :link="pagination.previous" class="btn-primary col-sm-2 col-md-1">
+          ⮜
+        </router-button>
+        <span class="btn btn-light col-sm-6 col-md-8">{{ pagination.page }} of {{ pagination.count }}</span>
+        <router-button :link="pagination.next" class="btn-primary col-sm-2 col-md-1">
+          ⮞
+        </router-button>
+        <router-button :link="pagination.last" :disabled="!pagination.next" class="btn-primary col-sm-2 col-md-1">
+          ⮞⮞
+        </router-button>
+      </nav>
+    </div>
     <div class="row">
       <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 text-center" :data-safety="post.safety" v-for="post in posts">
         <router-link :to="'/post/' + post.id" @click.stop.prevent="navigate(post.id)" class="d-block mb-4 h-100">
@@ -29,11 +46,17 @@
 </template>
 
 <script>
+import RouterButton from "./RouterButton";
+
 export default {
   name: 'PostsGrid',
+  components: {RouterButton,},
   props: {
     posts: Array,
     navigate: Function,
+    pagination: {
+      type: [Object, Boolean],
+    },
   },
 };
 </script>

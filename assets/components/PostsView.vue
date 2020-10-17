@@ -20,7 +20,7 @@
   <main class="container-fluid">
     <div class="row">
       <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="addTagToFilter" :showControls="true"></tags-list>
-      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :posts="posts" :navigate="gotoPost"></posts-grid>
+      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :pagination="pagination" :posts="posts" :navigate="gotoPost"></posts-grid>
     </div>
   </main>
 </template>
@@ -28,7 +28,6 @@
 <script>
 import PostsGrid from "./PostsGrid";
 import TagsList from "./TagsList";
-import PaginationControl from "./PaginationControl";
 import Client from "../utils/client";
 
 const extractPageFromUri = uri => {
@@ -41,7 +40,7 @@ const extractPageFromUri = uri => {
 
 export default {
   name: 'PostsView',
-  components: {PaginationControl, PostsGrid, TagsList,},
+  components: {PostsGrid, TagsList,},
   props: {
     filterTags: [Array, String],
     gotoPost: Function,
@@ -56,6 +55,8 @@ export default {
       previous: false,
       next: false,
       last: false,
+      page: 1,
+      count: 1,
     },
   }),
   methods: {
@@ -67,6 +68,8 @@ export default {
         this.pagination.previous = extractPageFromUri(data['hydra:view']['hydra:previous']);
         this.pagination.next = extractPageFromUri(data['hydra:view']['hydra:next']);
         this.pagination.last = extractPageFromUri(data['hydra:view']['hydra:last']);
+        this.pagination.page = extractPageFromUri(data['hydra:view']['@id']);
+        this.pagination.count = Math.max(this.pagination.page, this.pagination.last);
       });
     },
     addTagToFilter: function(tag, operation) {

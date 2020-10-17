@@ -17,9 +17,12 @@
   -->
 
 <template>
-  <a :disabled="!!!link" class="btn" @click.stop.prevent="$router.push(link)" :href="link">
-    <slot>Text</slot>
+  <a v-if="!disabled && !!link" class="btn" @click.stop.prevent="$router.push(link)" :href="link">
+    <slot />
   </a>
+  <button v-else :disabled="disabled || !!!link" class="btn">
+    <slot />
+  </button>
 </template>
 
 <script>
@@ -29,8 +32,13 @@ export default {
     link: {
       type: String,
       required: true
-    }
-  }
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
 }
 </script>
 
