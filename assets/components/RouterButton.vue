@@ -30,7 +30,7 @@ export default {
   name: 'RouterButton',
   props: {
     link: {
-      type: [String, Boolean],
+      type: [String, Boolean,],
       required: true
     },
     disabled: {

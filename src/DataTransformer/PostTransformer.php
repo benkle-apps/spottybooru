@@ -25,6 +25,7 @@ use App\DTO\Post as PostDTO;
 use App\Entity\PoolPost;
 use App\Entity\Post as PostEntity;
 use Symfony\Component\HttpFoundation\UrlHelper;
+use function array_search;
 
 class PostTransformer implements DataTransformerInterface
 {
@@ -73,7 +74,7 @@ class PostTransformer implements DataTransformerInterface
                     usort($poolPosts, static function(PoolPost $a, PoolPost $b) {
                         return $a->position <=> $b->position;
                     });
-                    $here = \array_search($poolPost, $poolPosts, true);
+                    $here = array_search($poolPost, $poolPosts, true);
                     $previous = $poolPosts[$here - 1] ?? null;
                     $next = $poolPosts[$here + 1] ?? null;
                     return [

@@ -17,34 +17,35 @@
   -->
 
 <template>
-  <div class="container">
-    <div class="row">
-      <span v-for="tag in tags" class="btn-group tag col-sm-6 col-6 col-md-12">
-        <router-button class="btn-success hover w-25" :link="navigate(tag.title, 'add')" v-if="showControls">+</router-button>
-
-        <router-button :link="navigate(tag.title, 'set')" :title="tag.title" class="w-50">
-          {{ tag.title }}
-          <span class="badge badge-info" :class="{'no-hover': showControls}">
-            <span>{{ tag.amount }}</span>
-          </span>
-        </router-button>
-
-        <router-button :link="navigate(tag.title, 'remove')" class="btn-danger hover w-25" v-if="showControls">-</router-button>
-      </span>
-    </div>
+  <div v-if="pagination && (pagination.next || pagination.previous)">
+    <nav class="btn-group col-12 container">
+      <router-button :link="pagination.first" :disabled="!pagination.previous" class="btn-primary col-sm-2 col-md-1">
+        ⮜⮜
+      </router-button>
+      <router-button :link="pagination.previous" class="btn-primary col-sm-2 col-md-1">
+        ⮜
+      </router-button>
+      <span class="btn btn-light col-sm-6 col-md-8">{{ pagination.page }} of {{ pagination.count }}</span>
+      <router-button :link="pagination.next" class="btn-primary col-sm-2 col-md-1">
+        ⮞
+      </router-button>
+      <router-button :link="pagination.last" :disabled="!pagination.next" class="btn-primary col-sm-2 col-md-1">
+        ⮞⮞
+      </router-button>
+    </nav>
   </div>
 </template>
 
 <script>
 import RouterButton from "./RouterButton";
+import HydraPagination from "../utils/HydraPagination";
 
 export default {
-  name: 'TagsList',
+  name: 'Pagination',
   components: {RouterButton,},
   props: {
-    tags: Array,
-    navigate: Function,
-    showControls: Boolean,
+    pagination: [Boolean, HydraPagination],
   },
-};
+
+}
 </script>

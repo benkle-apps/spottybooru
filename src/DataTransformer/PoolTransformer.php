@@ -26,19 +26,24 @@ use App\DTO\Pool as PoolDTO;
 use App\Entity\Pool as PoolEntity;
 use App\Entity\PoolPost;
 use App\Entity\Post;
+use Symfony\Component\HttpFoundation\UrlHelper;
 
 class PoolTransformer implements DataTransformerInterface
 {
     private IriConverterInterface $iriConverter;
 
+    private UrlHelper $urlHelper;
+
     /**
      * PoolTransformer constructor.
      *
      * @param IriConverterInterface $iriConverter
+     * @param UrlHelper             $urlHelper
      */
-    public function __construct(IriConverterInterface $iriConverter)
+    public function __construct(IriConverterInterface $iriConverter, UrlHelper $urlHelper)
     {
         $this->iriConverter = $iriConverter;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -48,6 +53,8 @@ class PoolTransformer implements DataTransformerInterface
     {
         if (PoolDTO::class === $to && $object instanceof PoolEntity) {
             $result = new PoolDTO();
+            $result->id = $object->getId()->toString();
+            $result->thumbnail = $this->urlHelper->getAbsoluteUrl('/thumbnails/' . $object->getPosts()[0]->post->thumbnail);
             $result->title = $object->title;
             $result->posts = $object
                 ->getPosts()

@@ -19,11 +19,13 @@
 
 namespace App\DTO;
 
-use App\Entity\Post;
-
 class Pool
 {
+    public string $id;
+
     public string $title;
+
+    public string $thumbnail;
 
     /**
      * @var string[]

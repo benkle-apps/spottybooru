@@ -3,35 +3,22 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import PostsView from './components/PostsView.vue';
 import PostView from "./components/PostView.vue";
-import Client from "./utils/client";
+import Client from "./utils/Client";
 import PoolView from "./components/PoolView";
+import PoolsView from "./components/PoolsView";
 
 Vue.use(VueRouter);
 
 const client = new Client(window.location.origin);
-const gotoPost = uuid => router.push('/post/' + uuid);
 
 const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            name: 'PostsView',
-            path: '/:page(\\d+)?',
-            component: PostsView,
+            name: 'PoolsView',
+            path: '/pools/:page(\\d+)?',
+            component: PoolsView,
             props: route => ({
-                filterTags: [],
-                gotoPost,
-                client,
-                page: parseInt(route.params.page ?? 1),
-            }),
-        },
-        {
-            name: 'PostsView',
-            path: '/:tags([^/]+)/:page(\\d+)?',
-            component: PostsView,
-            props: route => ({
-                filterTags: (route.params.tags ?? '').split(','),
-                gotoPost,
                 client,
                 page: parseInt(route.params.page ?? 1),
             }),
@@ -42,7 +29,6 @@ const router = new VueRouter({
             component: PostView,
             props: route => ({
                 uuid: route.params.uuid,
-                gotoPost,
                 client,
             }),
         },
@@ -52,8 +38,27 @@ const router = new VueRouter({
             component: PoolView,
             props: route => ({
                 uuid: route.params.uuid,
-                gotoPost,
                 client,
+            }),
+        },
+        {
+            name: 'PostsView',
+            path: '/:page(\\d+)?',
+            component: PostsView,
+            props: route => ({
+                filterTags: [],
+                client,
+                page: parseInt(route.params.page ?? 1),
+            }),
+        },
+        {
+            name: 'FilteredPostsView',
+            path: '/:tags([^/]+)/:page(\\d+)?',
+            component: PostsView,
+            props: route => ({
+                filterTags: (route.params.tags ?? '').split(','),
+                client,
+                page: parseInt(route.params.page ?? 1),
             }),
         },
     ],

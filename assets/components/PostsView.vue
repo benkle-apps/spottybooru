@@ -19,8 +19,8 @@
 <template>
   <main class="container-fluid">
     <div class="row">
-      <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="addTagToFilter" :showControls="true" v-if="pagination"></tags-list>
-      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :title="title" :pagination="pagination" :posts="posts" :navigate="gotoPost"></posts-grid>
+      <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="addTagToFilter" :showControls="true" v-if="pagination" />
+      <posts-grid class="col-xxl-11 col-md-10 col-sm-12" :title="title" :pagination="pagination" :posts="posts" />
     </div>
   </main>
 </template>
@@ -28,22 +28,14 @@
 <script>
 import PostsGrid from "./PostsGrid";
 import TagsList from "./TagsList";
-import Client from "../utils/client";
-
-const extractPageFromUri = uri => {
-  if (!uri) {
-    return false;
-  }
-  uri = new URL(uri, 'http://somewhere.org/');
-  return uri.searchParams.get('page') ?? false;
-};
+import Client from "../utils/Client";
+import HydraPagination from "../utils/HydraPagination";
 
 export default {
   name: 'PostsView',
   components: {PostsGrid, TagsList,},
   props: {
-    filterTags: [Array, String],
-    gotoPost: Function,
+    filterTags: [Array, String,],
     client: Client,
     page: Number,
   },
@@ -51,26 +43,14 @@ export default {
     tags: [],
     posts: [],
     title: false,
-    pagination: {
-      first: 1,
-      previous: false,
-      next: false,
-      last: false,
-      page: 1,
-      count: 1,
-    },
+    pagination: new HydraPagination(),
   }),
   methods: {
     update: function(filterTags, page) {
       this.client.getTags(filterTags).then(data => this.tags = data);
       this.client.getPosts(filterTags, page).then(data => {
         this.posts = data['hydra:member'];
-        this.pagination.first = extractPageFromUri(data['hydra:view']['hydra:first']);
-        this.pagination.previous = extractPageFromUri(data['hydra:view']['hydra:previous']);
-        this.pagination.next = extractPageFromUri(data['hydra:view']['hydra:next']);
-        this.pagination.last = extractPageFromUri(data['hydra:view']['hydra:last']);
-        this.pagination.page = extractPageFromUri(data['hydra:view']['@id']);
-        this.pagination.count = Math.max(this.pagination.page, this.pagination.last);
+        this.pagination = new HydraPagination(data['hydra:view']);
       });
     },
     addTagToFilter: function(tag, operation) {

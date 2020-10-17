@@ -21,7 +21,6 @@ namespace App\Service;
 
 
 use App\Entity\Post;
-use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use Imagick;
 use ImagickException;

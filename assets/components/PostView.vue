@@ -63,7 +63,7 @@
 
 <script>
 import TagsList from "./TagsList";
-import Client from "../utils/client";
+import Client from "../utils/Client";
 import RouterButton from "./RouterButton";
 
 export default {
@@ -72,7 +72,6 @@ export default {
   props: {
     uuid: String,
     client: Client,
-    gotoPost: Function,
   },
   data: () => ({
     tags: [],

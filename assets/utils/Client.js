@@ -55,7 +55,13 @@ class Client {
         return jsonFetch(uri).then(data => data.map(addDisplayAmountToTags));
     }
 
-    async getPostsForPool(uuid, resolvePosts) {
+    async getPools(page = 1) {
+        const uri = new URL('api/pools', this.baseUri);
+        uri.searchParams.set('page', page.toString());
+        return jsonFetch(uri);
+    }
+
+    async getPool(uuid, resolvePosts) {
         const uri = new URL('api/pools/' + uuid, this.baseUri);
         let result = jsonFetch(uri);
         if (resolvePosts) {

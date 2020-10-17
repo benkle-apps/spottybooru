@@ -1,4 +1,3 @@
-<?php
 /*
  * Copyright 2020 Benjamin Kleiner
  *
@@ -17,46 +16,23 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\DTO;
-
-
-use DateTime;
-
-class Post
-{
-    public string $id;
-
-    public string $title;
-
-    public ?string $description;
-
-    public string $safety;
-
-    /**
-     * @var string[]
-     */
-    public array $tags;
-
-    public string $checksum;
-
-    public int $size;
-
-    public int $width;
-
-    public int $height;
-
-    public string $mime;
-
-    public DateTime $created;
-
-    public DateTime $updated;
-
-    public string $file;
-
-    public string $thumbnail;
-
-    /**
-     * @var string[]
-     */
-    public array $pools;
+const extractPageFromUri = uri => {
+    if (!uri) {
+        return false;
+    }
+    uri = new URL(uri, 'http://somewhere.org/');
+    return uri.searchParams.get('page') ?? false;
 }
+
+class HydraPagination {
+    constructor(hydra = []) {
+        this.first = extractPageFromUri(hydra['hydra:first']);
+        this.previous = extractPageFromUri(hydra['hydra:previous']);
+        this.next = extractPageFromUri(hydra['hydra:next']);
+        this.last = extractPageFromUri(hydra['hydra:last']);
+        this.page = extractPageFromUri(hydra['@id']);
+        this.count = Math.max(0, this.page, this.last);
+    }
+}
+
+export default HydraPagination;

@@ -18,33 +18,49 @@
 
 <template>
   <div class="container">
+    <pagination :pagination="pagination" class="row" />
     <div class="row">
-      <span v-for="tag in tags" class="btn-group tag col-sm-6 col-6 col-md-12">
-        <router-button class="btn-success hover w-25" :link="navigate(tag.title, 'add')" v-if="showControls">+</router-button>
-
-        <router-button :link="navigate(tag.title, 'set')" :title="tag.title" class="w-50">
-          {{ tag.title }}
-          <span class="badge badge-info" :class="{'no-hover': showControls}">
-            <span>{{ tag.amount }}</span>
-          </span>
-        </router-button>
-
-        <router-button :link="navigate(tag.title, 'remove')" class="btn-danger hover w-25" v-if="showControls">-</router-button>
-      </span>
+      <div class="list-group col-12">
+        <router-link @click.stop :to="'/pool/' + pool.id" class="list-group-item list-group-item-action" v-for="pool in pools">
+          <img :src="pool.thumbnail" :alt="pool.title" />
+          {{ pool.title }}
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import RouterButton from "./RouterButton";
+import Client from "../utils/Client";
+import Pagination from "./Pagination";
+import HydraPagination from "../utils/HydraPagination";
 
 export default {
-  name: 'TagsList',
-  components: {RouterButton,},
+  name: 'PoolsView',
+  components: {Pagination},
   props: {
-    tags: Array,
-    navigate: Function,
-    showControls: Boolean,
+    page: Number,
+    client: Client,
   },
-};
+  data: () => ({
+    pools: [],
+    pagination: new HydraPagination(),
+  }),
+  methods: {
+    update: function(page) {
+      this.client.getPools(page).then(data => {
+        this.pools = data['hydra:member'];
+        this.pagination = new HydraPagination(data['hydra:view']);
+      });
+    },
+  },
+  created() {
+    this.update(this.page);
+  },
+  watch: {
+    page(to) {
+      this.update(to);
+    },
+  },
+}
 </script>

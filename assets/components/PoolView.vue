@@ -18,19 +18,18 @@
 
 <script>
 import PostsView from "./PostsView";
-import Client from "../utils/client";
+import Client from "../utils/Client";
 
 export default {
   name: 'PoolView',
   extends: PostsView,
   props: {
     uuid: String,
-    gotoPost: Function,
     client: Client,
   },
   methods: {
     update: function(uuid) {
-      this.client.getPostsForPool(uuid || this.uuid, true).then(pool => {
+      this.client.getPool(uuid || this.uuid, true).then(pool => {
         this.posts = pool.posts;
         this.pagination = false;
         this.title = pool.title;

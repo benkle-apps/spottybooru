@@ -21,27 +21,11 @@
     <div class="row" v-if="title">
       <h3 class="col-12">{{ title }}</h3>
     </div>
-    <div class="row" v-if="pagination && (pagination.next || pagination.previous)">
-      <nav class="btn-group col-12 container">
-        <router-button :link="pagination.first" :disabled="!pagination.previous" class="btn-primary col-sm-2 col-md-1">
-          ⮜⮜
-        </router-button>
-        <router-button :link="pagination.previous" class="btn-primary col-sm-2 col-md-1">
-          ⮜
-        </router-button>
-        <span class="btn btn-light col-sm-6 col-md-8">{{ pagination.page }} of {{ pagination.count }}</span>
-        <router-button :link="pagination.next" class="btn-primary col-sm-2 col-md-1">
-          ⮞
-        </router-button>
-        <router-button :link="pagination.last" :disabled="!pagination.next" class="btn-primary col-sm-2 col-md-1">
-          ⮞⮞
-        </router-button>
-      </nav>
-    </div>
+    <pagination class="row" :pagination="pagination" />
     <div class="row">
       <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 text-center" :data-safety="post.safety" v-for="post in posts">
-        <router-link :to="'/post/' + post.id" @click.stop.prevent="navigate(post.id)" class="d-block mb-4 h-100">
-          <img class="img-fluid img-thumbnail" :src="post.thumbnail" :alt="post.title" :title="post.title">
+        <router-link :to="'/post/' + post.id" @click.stop class="d-block mb-4 h-100">
+          <img class="img-fluid img-thumbnail" :src="post.thumbnail" :alt="post.title" :title="post.title" />
         </router-link>
       </div>
     </div>
@@ -50,15 +34,16 @@
 
 <script>
 import RouterButton from "./RouterButton";
+import Pagination from "./Pagination";
+import HydraPagination from "../utils/HydraPagination";
 
 export default {
   name: 'PostsGrid',
-  components: {RouterButton,},
+  components: {Pagination, RouterButton,},
   props: {
     posts: Array,
-    navigate: Function,
-    pagination: [Object, Boolean],
-    title: [Boolean, String],
+    pagination: [Boolean, HydraPagination,],
+    title: [Boolean, String,],
   },
 };
 </script>
