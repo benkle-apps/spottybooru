@@ -22,6 +22,7 @@ namespace App\DataTransformer;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use App\DTO\Post as PostDTO;
+use App\DTO\PostPoolConnector;
 use App\Entity\PoolPost;
 use App\Entity\Post as PostEntity;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -55,7 +56,7 @@ class PostTransformer implements DataTransformerInterface
             $result = new PostDTO();
             $result->thumbnail = $this->urlHelper->getAbsoluteUrl('/thumbnails/' . $object->thumbnail);
             $result->file = $this->urlHelper->getAbsoluteUrl('/files/' . $object->file);
-            $result->id = $object->getId()->toString();
+            $result->id = (string)$object->getId();
             $result->tags = $object->tags;
             $result->checksum = $object->checksum;
             $result->title = $object->title;
@@ -77,15 +78,12 @@ class PostTransformer implements DataTransformerInterface
                     $here = array_search($poolPost, $poolPosts, true);
                     $previous = $poolPosts[$here - 1] ?? null;
                     $next = $poolPosts[$here + 1] ?? null;
-                    return [
-                        'id' => $pool->getId(),
-                        '@id' => $this->iriConverter->getIriFromItem($pool),
-                        'title' => $pool->title,
-                        '@previous' => $previous ? $this->iriConverter->getIriFromItem($previous->post) : null,
-                        '@next' => $next ? $this->iriConverter->getIriFromItem($next->post) : null,
-                        'previous' => $previous ? $previous->post->getId() : null,
-                        'next' => $next ? $next->post->getId() : null,
-                    ];
+                    $connector = new PostPoolConnector();
+                    $connector->id = (string)$pool->getId();
+                    $connector->title = $pool->title;
+                    $connector->previous = null !== $previous ? (string)$previous->post->getId() : null;
+                    $connector->next = null !== $next ? (string)$next->post->getId() : null;
+                    return $connector;
                 })
                 ->toArray();
         }

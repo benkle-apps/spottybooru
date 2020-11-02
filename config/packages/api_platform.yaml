@@ -1,4 +1,12 @@
 api_platform:
+    title: Spottybooru
+    description: A small booru for personal use
+    show_webby: false
+    version: 0.9.0
+    enable_swagger_ui: true
+    enable_swagger: true
+    enable_re_doc: true
+    enable_docs: true
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     patch_formats:
@@ -6,3 +14,10 @@ api_platform:
         multipart: ['multipart/form-data']
     swagger:
         versions: [3]
+    formats:
+        jsonld:
+            mime_types: ['application/ld+json']
+        json:
+            mime_types: ['application/json']
+        html:
+            mime_types: [ 'text/html' ]

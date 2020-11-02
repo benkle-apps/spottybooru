@@ -19,44 +19,110 @@
 
 namespace App\DTO;
 
-
+use ApiPlatform\Core\Annotation\ApiProperty;
 use DateTime;
 
 class Post
 {
+    /**
+     * The post's UUID
+     * @var string
+     * @ApiProperty(openapiContext={"format"="uuid"})
+     */
     public string $id;
 
+    /**
+     * The post's title
+     * @var string
+     */
     public string $title;
 
+    /**
+     * The post's description (e.g. artist's comment)
+     * @var string|null
+     */
     public ?string $description;
 
+    /**
+     * The safety
+     * @var string
+     * @ApiProperty(openapiContext={"enum"={"safe", "sketchy", "unsafe"}})
+     */
     public string $safety;
 
     /**
+     * Tags describing the post
      * @var string[]
      */
     public array $tags;
 
+    /**
+     * Checksum used for duplication prevention
+     * @var string
+     * @ApiProperty(writable=false)
+     */
     public string $checksum;
 
+    /**
+     * File size
+     * @var int
+     * @ApiProperty(writable=false)
+     */
     public int $size;
 
+    /**
+     * Width in pixel (if available)
+     * @var int
+     * @ApiProperty(writable=false)
+     */
     public int $width;
 
+    /**
+     * Height in pixel (if available)
+     * @var int
+     * @ApiProperty(writable=false)
+     */
     public int $height;
 
+    /**
+     * Mime type
+     * @var string
+     * @ApiProperty(writable=false, openapiContext={"format"="mime"})
+     */
     public string $mime;
 
+    /**
+     * Date and time of the post's creation
+     * @var DateTime
+     * @ApiProperty(writable=false)
+     */
     public DateTime $created;
 
+    /**
+     * Date and time of the post's last update
+     * @var DateTime
+     * @ApiProperty(writable=false)
+     */
     public DateTime $updated;
 
+    /**
+     * URI to the main file
+     * @var string
+     * @ApiProperty(writable=false, openapiContext={"format"="uri"})
+     */
     public string $file;
 
+    /**
+     * URI of the thumbnail file
+     * @var string
+     * @ApiProperty(writable=false, openapiContext={"format"="uri"})
+     */
     public string $thumbnail;
 
     /**
-     * @var string[]
+     * List of pools, with connecting metadata
+     * @var PostPoolConnector[]
+     * @ApiProperty(writable=false)
      */
     public array $pools;
 }

@@ -25,12 +25,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
+use App\Repository\PoolRepository;
 
 /**
  * Class Pool
  *
  * @package App\Entity
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass=PoolRepository::class)
  * @ApiResource(
  *     output="App\DTO\Pool",
  *     input="App\DTO\Pool"
@@ -115,5 +116,17 @@ class Pool
     {
         $this->id = $data['id'];
         $this->title = $data['title'];
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }

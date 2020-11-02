@@ -17,42 +17,22 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\DTO;
+namespace App\Repository;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Pool;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class Pool
- *
- * @package App\DTO
- * @ApiResource()
+ * @method Pool|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Pool|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Pool[]    findAll()
+ * @method Pool[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class Pool
+class PoolRepository extends ServiceEntityRepository
 {
-    /**
-     * The pool's UUID
-     * @var string
-     * @ApiProperty(openapiContext={"format"="uuid"})
-     */
-    public string $id;
-
-    /**
-     * The pool's title
-     * @var string
-     */
-    public string $title;
-
-    /**
-     * The pool's thumbnail
-     * @var string
-     * @ApiProperty(openapiContext={"format"="uri"})
-     */
-    public string $thumbnail;
-
-    /**
-     * The posts in the pool
-     * @var string[]
-     */
-    public array $posts;
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Pool::class);
+    }
 }

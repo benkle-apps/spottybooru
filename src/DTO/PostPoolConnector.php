@@ -23,36 +23,38 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
- * Class Pool
+ * Class PostPoolConnector
  *
  * @package App\DTO
- * @ApiResource()
+ * @ApiResource(normalizationContext={"skip_null_values"=false})
  */
-class Pool
+class PostPoolConnector
 {
     /**
      * The pool's UUID
      * @var string
-     * @ApiProperty(openapiContext={"format"="uuid"})
+     * @ApiProperty(writable=false, openapiContext={"format"="uuid"})
      */
     public string $id;
 
     /**
      * The pool's title
      * @var string
+     * @ApiProperty(writable=false)
      */
     public string $title;
 
     /**
-     * The pool's thumbnail
-     * @var string
-     * @ApiProperty(openapiContext={"format"="uri"})
+     * UUID of the next post in the pool
+     * @var string|null
+     * @ApiProperty(writable=false, openapiContext={"format"="uuid"})
      */
-    public string $thumbnail;
+    public ?string $next;
 
     /**
-     * The posts in the pool
-     * @var string[]
+     * UUID of the previous post in the pool
+     * @var string|null
+     * @ApiProperty(writable=false, openapiContext={"format"="uuid"})
      */
-    public array $posts;
+    public ?string $previous;
 }
