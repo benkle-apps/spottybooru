@@ -173,6 +173,12 @@ class Post
      */
     private Collection $pools;
 
+    /**
+     * @ORM\Column(type="json", options={"default": "[]"})
+     * @var string[]
+     */
+    public array $links = [];
+
     public function __construct()
     {
         $this->pools = new ArrayCollection();

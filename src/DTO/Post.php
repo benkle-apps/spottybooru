@@ -27,7 +27,7 @@ class Post
     /**
      * The post's UUID
      * @var string
-     * @ApiProperty(openapiContext={"format"="uuid"})
+     * @ApiProperty(openapiContext={"format"="uuid"}, writable=false)
      */
     public string $id;
 
@@ -125,4 +125,10 @@ class Post
      * @ApiProperty(writable=false)
      */
     public array $pools;
+
+    /**
+     * @var array
+     * @ApiProperty(writable=true)
+     */
+    public array $links;
 }

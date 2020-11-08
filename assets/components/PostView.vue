@@ -17,10 +17,20 @@
   -->
 
 <template>
-  <main class="container-fluid">
+  <main class="container-fluid post">
     <div class="row">
-      <tags-list class="col-xxl-1 col-md-2 col-sm-12" :tags="tags" :navigate="gotoTag" :showControls="false"></tags-list>
-      <div class="col-xxl-11 col-md-10 col-sm-12 post container">
+      <div class="col-xxl-1 col-md-2 col-sm-12">
+        <tags-list :tags="tags" :navigate="gotoTag" :showControls="false" />
+        <hr />
+        <dl class="row">
+          <dt class="col-6" v-if="post.height">Height</dt><dd class="col-6">{{ post.height }}px</dd>
+          <dt class="col-6" v-if="post.width">Width</dt><dd class="col-6">{{ post.width }}px</dd>
+          <dt class="col-6" v-if="post.size">Size</dt><dd class="col-6">{{ sizeFormatted() }}</dd>
+        </dl>
+        <hr v-if="post.links.length > 0" />
+        <a class="link" v-for="link in post.links" :href="link">{{ link }}</a>
+      </div>
+      <div class="col-xxl-11 col-md-10 col-sm-12 container">
         <div class="row" v-if="post.pools.length">
           <nav class="btn-group col-12 container" v-for="pool in post.pools">
             <router-button :link="pool.previous" class="btn-primary col-sm-2 col-md-1">
@@ -66,6 +76,8 @@ import TagsList from "./TagsList";
 import Client from "../utils/Client";
 import RouterButton from "./RouterButton";
 
+const IEC_FORMATS = ['b', 'KiB', 'MiB', 'GiB', 'TiB'];
+
 export default {
   name: 'PostView',
   components: {TagsList, RouterButton,},
@@ -83,7 +95,9 @@ export default {
       thumbnail: '',
       width: 0,
       height: 0,
+      size: 0,
       pools: [],
+      links: [],
     },
   }),
   computed: {
@@ -95,6 +109,13 @@ export default {
     update: function (uuid) {
       this.client.getTagsForPost(uuid).then(data => this.tags = data);
       this.client.getPost(uuid).then(data => this.post = data);
+    },
+    sizeFormatted: function() {
+      let count = 0;
+      while (this.post.size / Math.pow(1024, count) > 1024) {
+        count++;
+      }
+      return (this.post.size / Math.pow(1024.0, count)).toFixed(1) + ' ' + IEC_FORMATS[count];
     },
     gotoTag: function (tag) {
       return '/' + tag;

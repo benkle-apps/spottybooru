@@ -68,6 +68,7 @@ class PostTransformer implements DataTransformerInterface
             $result->description = $object->description;
             $result->height = $object->height;
             $result->safety = $object->safety;
+            $result->links = $object->links;
             $result->pools = $object->getPools()
                 ->map(function(PoolPost $poolPost) {
                     $pool = $poolPost->pool;
@@ -88,11 +89,13 @@ class PostTransformer implements DataTransformerInterface
                 ->toArray();
         }
         if (PostEntity::class === $to && $object instanceof PostDTO) {
-            $result = new PostEntity();
-            $result->tags = $object->tags;
-            $result->title = $object->title;
-            $result->description = $object->description;
-            $result->safety = $object->safety;
+            $result = array_key_exists('object_to_populate', $context) ? $context['object_to_populate'] : new PostEntity();
+            foreach (['tags', 'title', 'description', 'safety', 'links'] as $property) {
+                $reflection = new \ReflectionProperty(PostDTO::class, $property);
+                if ($reflection->isInitialized($object)) {
+                    $result->{$property} = $object->{$property};
+                }
+            }
         }
         return $result;
     }
